@@ -83,7 +83,7 @@ export default {
 @font-face {
 	font-family: "Satisfy";
 	src: local("Satisfy"),
-		url(../assets/fonts/Satisfy-Regular.ttf) format("truetype");
+		url(../../assets/fonts/Satisfy-Regular.ttf) format("truetype");
 }
 .navbar-brand {
 	font-family: "Satisfy" !important;
