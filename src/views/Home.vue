@@ -1,9 +1,20 @@
 <template>
   <div class="container-fluid">
-    <h1>Halaman Utama</h1>
+    <Navbar />
+    <Header />
+    <Service />
+    <FAQ />
   </div>
 </template>
 
 <script>
-export default {};
+import Navbar from "@/components/Navbar.vue";
+import Header from "@/components/Header.vue";
+import Service from "@/components/Service.vue";
+import FAQ from "@/components/FAQ.vue";
+
+export default {
+  name: "Home",
+  components: { Navbar, Header, Service, FAQ },
+};
 </script>
