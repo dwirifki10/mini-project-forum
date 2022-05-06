@@ -49,14 +49,13 @@
 					</router-link>
 				</li>
 				<li class="nav-item">
-					<button class="btn bg-base pe-4 ps-4 rounded-pill">
-						<router-link
-							class="text-white font-base text-decoration-none"
-							:to="{ name: 'Home' }"
+					<router-link class="" :to="{ name: 'Login' }">
+						<button
+							class="btn bg-base pe-4 ps-4 rounded-pill font-base text-decoration-none text-white"
 						>
 							Sign In
-						</router-link>
-					</button>
+						</button>
+					</router-link>
 				</li>
 			</ul>
 		</div>
@@ -68,7 +67,7 @@ export default {
 	name: "Navbar",
 	data() {
 		return {
-			show: true,
+			show: false,
 		};
 	},
 	methods: {
