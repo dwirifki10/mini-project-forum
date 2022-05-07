@@ -1,5 +1,5 @@
 <template>
-	<div class="font-base mt-4 p-3">
+	<div class="font-base mt-4 p-3 mb-3">
 		<div class="card shadow col-lg-11 mx-auto">
 			<div class="card-body">
 				<div class="row g-2">

@@ -46,7 +46,7 @@
 				</router-link>
 			</div>
 		</div>
-		<div class="bg-light">
+		<div class="bg-light pb-1">
 			<p class="color-title fs-25 fw-bold text-center pt-2">
 				Copyright &copy; Dwi Rifki Novianto. All rights reserved
 			</p>

@@ -1,5 +1,5 @@
 <template>
-	<div class="font-base mt-4 p-3">
+	<div class="font-base mt-4 mb-3 p-3">
 		<div class="card shadow col-lg-11 mx-auto">
 			<div class="card-body">
 				<div class="row g-2">
@@ -56,7 +56,7 @@
 							</router-link>
 						</div>
 					</div>
-					<div class="col-lg-8 mr-3">
+					<div class="col-lg-8">
 						<img
 							src="../../assets/img/L01.jpg"
 							class="img-fluid"
