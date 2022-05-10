@@ -1,6 +1,6 @@
 <template>
-	<div class="font-base mt-4 p-3">
-		<div class="card shadow col-lg-11 mx-auto">
+	<div class="font-base">
+		<div class="card shadow col-lg-11 center">
 			<div class="card-body">
 				<div class="row g-2">
 					<div class="col-lg-4 mt-2 align-self-center">
@@ -65,6 +65,13 @@ export default {
 </script>
 
 <style scoped>
+.center {
+	width: 90%;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
 .card-title {
 	font-family: "Satisfy" !important;
 	color: #083d77 !important;

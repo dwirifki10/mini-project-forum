@@ -24,27 +24,42 @@
 		>
 			<ul class="navbar-nav mr-auto fw-bold fs-25 ps-4">
 				<li class="nav-item pe-3">
-					<router-link class="nav-link" :to="{ name: 'Home' }">
+					<router-link
+						class="nav-link"
+						:to="{ name: 'Category', params: { id: '1' } }"
+					>
 						Entertainment
 					</router-link>
 				</li>
 				<li class="nav-item pe-3">
-					<router-link class="nav-link" :to="{ name: 'Home' }">
+					<router-link
+						class="nav-link"
+						:to="{ name: 'Category', params: { id: '2' } }"
+					>
 						Arts
 					</router-link>
 				</li>
 				<li class="nav-item pe-3">
-					<router-link class="nav-link" :to="{ name: 'Home' }">
+					<router-link
+						class="nav-link"
+						:to="{ name: 'Category', params: { id: '3' } }"
+					>
 						Technology
 					</router-link>
 				</li>
 				<li class="nav-item pe-3">
-					<router-link class="nav-link" :to="{ name: 'Home' }">
+					<router-link
+						class="nav-link"
+						:to="{ name: 'Category', params: { id: '4' } }"
+					>
 						Sport
 					</router-link>
 				</li>
 				<li class="nav-item pe-3">
-					<router-link class="nav-link" :to="{ name: 'Home' }">
+					<router-link
+						class="nav-link"
+						:to="{ name: 'Category', params: { id: '5' } }"
+					>
 						Education
 					</router-link>
 				</li>

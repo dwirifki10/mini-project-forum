@@ -9,15 +9,19 @@
 			</div>
 			<div class="col-lg-2 mt-5 ps-5 mb-2">
 				<p class="mb-3 fw-bold">Kategori</p>
-				<router-link :to="{ name: 'Home' }">
+				<router-link :to="{ name: 'Category', params: { id: '1' } }">
 					<p class="g-0">Entertainment</p>
 				</router-link>
-				<router-link :to="{ name: 'Home' }"> <p>Arts</p> </router-link>
-				<router-link :to="{ name: 'Home' }">
+				<router-link :to="{ name: 'Category', params: { id: '2' } }">
+					<p>Arts</p>
+				</router-link>
+				<router-link :to="{ name: 'Category', params: { id: '3' } }">
 					<p>Technology</p>
 				</router-link>
-				<router-link :to="{ name: 'Home' }"> <p>Sport</p> </router-link>
-				<router-link :to="{ name: 'Home' }">
+				<router-link :to="{ name: 'Category', params: { id: '4' } }">
+					<p>Sport</p>
+				</router-link>
+				<router-link :to="{ name: 'Category', params: { id: '5' } }">
 					<p>Education</p>
 				</router-link>
 			</div>
@@ -46,7 +50,7 @@
 				</router-link>
 			</div>
 		</div>
-		<div class="bg-light">
+		<div class="bg-light pb-1">
 			<p class="color-title fs-25 fw-bold text-center pt-2">
 				Copyright &copy; Dwi Rifki Novianto. All rights reserved
 			</p>
