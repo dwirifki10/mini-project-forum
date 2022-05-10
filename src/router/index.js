@@ -4,6 +4,7 @@ import Home from "../views/Home.vue";
 import Login from "../views/Login.vue";
 import Register from "../views/Register.vue";
 import Detail from "../views/Detail.vue";
+import Category from "../views/Category.vue";
 
 Vue.use(VueRouter);
 
@@ -27,6 +28,11 @@ const routes = [
     path: "/detail/:id",
     name: "Detail",
     component: Detail,
+  },
+  {
+    path: "/category/:id",
+    name: "Category",
+    component: Category,
   },
 ];
 

@@ -1,18 +1,18 @@
 <template>
 	<div class="container-fluid">
 		<Navbar />
-		<Discussion />
+		<List />
 		<Footer />
 	</div>
 </template>
 
 <script>
 import Navbar from "../components/HomeContainer/Navbar.vue";
+import List from "../components/CategoryContainer/List.vue";
 import Footer from "../components/HomeContainer/Footer.vue";
-import Discussion from "../components/DetailContainer/Discussion.vue";
 
 export default {
-	name: "Detail",
-	components: { Navbar, Footer, Discussion },
+	name: "Category",
+	components: { Navbar, List, Footer },
 };
 </script>

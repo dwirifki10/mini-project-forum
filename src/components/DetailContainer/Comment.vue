@@ -11,7 +11,7 @@
 				<router-link class="card-title ps-1" :to="{ name: 'Home' }">
 					Dwi Rifki Novianto
 				</router-link>
-				<p class="fs-25 mt-2 mb-4">
+				<p class="fs-25 mt-3 mb-4">
 					Ambitioni dedisse scripsisse iudicaretur. Cras mattis
 					iudicium purus sit amet fermentum. Donec sed odio operae, eu
 					vulputate felis rhoncus. Praeterea iter est quasdam res quas

@@ -56,7 +56,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="col-lg-4 mt-1 p-3 mb-3">
+			<div class="col-lg-4 mt-1 p-3 mb-2">
 				<div class="card shadow-sm">
 					<div class="card-body">
 						<div class="input-group mb-3 mt-3">
@@ -89,6 +89,7 @@
 				</div>
 			</div>
 			<div class="col-lg-12">
+				<h5 class="fw-bold color-title ps-3 mt-2 mb-3">Komentar</h5>
 				<Comment />
 			</div>
 		</div>
