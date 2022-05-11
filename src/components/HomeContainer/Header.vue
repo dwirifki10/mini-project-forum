@@ -13,7 +13,7 @@
 				<button class="btn bg-base pe-4 ps-4 pt-2 pb-2 rounded-pill">
 					<router-link
 						class="text-white font-base text-decoration-none"
-						:to="{ name: 'Home' }"
+						:to="{ name: 'Dashboard' }"
 					>
 						Buat Post
 					</router-link>

@@ -44,7 +44,10 @@
 								</h6>
 								<div class="fs-25 d-flex card-bottom">
 									<router-link
-										:to="{ name: 'Home' }"
+										:to="{
+											name: 'Detail',
+											params: { id: '1' },
+										}"
 										class="fw-bold text-decoration-none color-title card-left"
 									>
 										Selengkapnya
