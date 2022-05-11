@@ -100,7 +100,7 @@ input,
 input::-webkit-input-placeholder {
 	color: #031b4e !important;
 	font-size: 15px;
-	opacity: 65%;
+	opacity: 0.75;
 	line-height: 2;
 }
 </style>
