@@ -79,6 +79,6 @@ export default {
 	color: #031b4e !important;
 	font-size: 15px;
 	font-weight: bold;
-	opacity: 75%;
+	opacity: 0.75;
 }
 </style>
