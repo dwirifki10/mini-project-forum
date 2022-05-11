@@ -20,10 +20,47 @@
 							Engineering Program, Class of 2019
 						</p>
 						<b-icon icon="star-fill" variant="warning"></b-icon>
-						<span class="text-warning fw-bold ps-1"> 4.5 </span>
-						<button class="btn bg-base text-white w-100 mb-3 mt-3">
+						<span class="text-warning fw-bold ps-1 mt-1">
+							4.5
+						</span>
+						<button
+							class="btn bg-base text-white w-100 mb-3 mt-3"
+							v-b-modal.modalPopover
+						>
 							Ubah Profile
 						</button>
+						<!-- Modal -->
+						<b-modal
+							id="modalPopover"
+							title="Ubah Profile"
+							hide-header-close
+							ok-only
+							@ok="changeProfile"
+							modal-class="my-modal"
+						>
+							<input type="file" class="form-control-file mb-3" />
+							<input
+								type="text"
+								class="form-control mb-3"
+								placeholder="Masukan nama anda"
+							/>
+							<input
+								type="text"
+								class="form-control mb-3"
+								placeholder="Masukan lokasi anda"
+							/>
+							<input
+								type="text"
+								class="form-control mb-3"
+								placeholder="Masukan status anda"
+							/>
+							<textarea
+								id="my-textarea"
+								class="form-control"
+								rows="3"
+								placeholder="Masukan status anda"
+							></textarea>
+						</b-modal>
 					</div>
 				</div>
 			</div>
@@ -38,14 +75,14 @@
 								</caption>
 								<thead class="bg-base text-white">
 									<tr>
-										<td scope="col">No</td>
-										<td scope="col">Judul</td>
-										<td scope="col" class="text-center">
+										<th scope="col">No</th>
+										<th scope="col">Judul</th>
+										<th scope="col" class="text-center">
 											Viewers
-										</td>
-										<td scope="col" class="text-center">
+										</th>
+										<th scope="col" class="text-center">
 											Actions
-										</td>
+										</th>
 									</tr>
 								</thead>
 								<tbody class="fs-25 align-items-center">
@@ -63,7 +100,7 @@
 											<router-link
 												:to="{
 													name: 'Detail',
-													params: '1',
+													params: { id: '1' },
 												}"
 												class="btn btn-success btn-sm mb-2 me-3 ms-3"
 											>
@@ -72,7 +109,7 @@
 											<router-link
 												:to="{
 													name: 'Detail',
-													params: '1',
+													params: { id: '1' },
 												}"
 												class="btn btn-danger btn-sm mb-2"
 											>
@@ -114,6 +151,11 @@ export default {
 			],
 		};
 	},
+	methods: {
+		changeProfile() {
+			console.log("ok");
+		},
+	},
 };
 </script>
 <style scoped>
@@ -125,5 +167,38 @@ export default {
 
 .table > :not(:first-child) {
 	border-top: 2px solid #083d77 !important;
+}
+
+/deep/ .my-modal {
+	font-family: "Roboto";
+	color: #083d77 !important;
+}
+
+/deep/ .my-modal h5 {
+	font-weight: bold;
+	font-family: "Roboto";
+	color: #083d77 !important;
+}
+
+/deep/ .my-modal input,
+input::-webkit-input-placeholder {
+	font-family: "Roboto";
+	color: #031b4e !important;
+	font-size: 15px;
+	opacity: 75%;
+	line-height: 2;
+}
+
+/deep/ .my-modal #my-textarea::-webkit-input-placeholder {
+	font-family: "Roboto";
+	color: #031b4e !important;
+	font-size: 15px;
+	opacity: 65%;
+	line-height: 2;
+}
+
+/deep/ .my-modal button {
+	border: 1px solid #083d77;
+	background: #083d77;
 }
 </style>

@@ -40,7 +40,7 @@
 								{{ item.createdAt }}
 							</p>
 							<router-link
-								:to="{ name: 'Home' }"
+								:to="{ name: 'Detail', params: { id: '1' } }"
 								class="fw-bold card-left text-decoration-none color-title"
 							>
 								Selengkapnya
