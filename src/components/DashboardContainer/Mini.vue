@@ -185,7 +185,7 @@ input::-webkit-input-placeholder {
 	font-family: "Roboto";
 	color: #031b4e !important;
 	font-size: 15px;
-	opacity: 75%;
+	opacity: 0.75;
 	line-height: 2;
 }
 
@@ -193,7 +193,7 @@ input::-webkit-input-placeholder {
 	font-family: "Roboto";
 	color: #031b4e !important;
 	font-size: 15px;
-	opacity: 65%;
+	opacity: 0.6;
 	line-height: 2;
 }
 

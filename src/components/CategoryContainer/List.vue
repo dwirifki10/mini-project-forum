@@ -23,7 +23,9 @@
 							/>
 							<div class="card-body color-base">
 								<div class="d-flex">
-									<p class="card-text opacity-75 fw-bold">
+									<p
+										class="card-text mb-0 opacity-75 fw-bold"
+									>
 										{{ item.category }}
 									</p>
 									<div class="ms-auto text-warning">
