@@ -14,14 +14,14 @@ Vue.use(VueApollo);
 
 const URI = process.env.HASURA_URI;
 const SECRET = process.env.HASURA_SECRET;
-const WSS = process.env.HASURA_WSS;
+// const WSS = process.env.HASURA_WSS;
 
 // HTTP connection to the API
 const httpLink = createHttpLink({
   // You should use an absolute URL here
   uri: URI,
   headers: {
-    "x-hasura-admin-secret": HASURA_SECRET,
+    "x-hasura-admin-secret": SECRET,
   },
 });
 
