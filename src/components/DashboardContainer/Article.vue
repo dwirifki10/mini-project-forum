@@ -1,6 +1,6 @@
 <template>
 	<div class="mt-4 font-base color-base">
-		<h5 class="fw-bold ps-3">Buat Post</h5>
+		<h5 class="fw-bold ps-3 color-title">Buat Post</h5>
 		<form>
 			<div class="row g-0">
 				<div class="col-lg-4 ps-3 pe-3 mb-3">

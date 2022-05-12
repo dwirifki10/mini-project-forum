@@ -13,10 +13,11 @@
 							</p>
 						</div>
 						<div class="justify-content-center mb-2 pe-2">
-							<form>
+							<form @submit.prevent="authenticate">
 								<div class="form-group mb-3">
 									<input
 										type="email"
+										v-model="form.email"
 										class="form-control"
 										placeholder="Masukan Email"
 									/>
@@ -24,6 +25,7 @@
 								<div class="form-group mb-3">
 									<input
 										type="password"
+										v-model="form.password"
 										class="form-control"
 										placeholder="Masukan Password"
 									/>
@@ -40,9 +42,14 @@
 							<router-link :to="{ name: 'Register' }">
 								Belum punya akun ? Daftar
 							</router-link>
-							<router-link :to="{ name: 'Home' }">
-								Lupa Password ?
-							</router-link>
+							<div :class="{ shake: disabled }">
+								<a @click="warnDisabled" href="#">
+									Lupa Password ?
+								</a>
+								<span v-if="disabled" class="text-secondary">
+									Fitur ini belum tersedia
+								</span>
+							</div>
 						</div>
 					</div>
 					<div class="col-lg-8">
@@ -59,8 +66,67 @@
 </template>
 
 <script>
+import { AUTH_USER } from "@/graph/user.js";
+import { mapMutations } from "vuex";
+
 export default {
 	name: "Authentication",
+	data() {
+		return {
+			disabled: false,
+			form: {
+				email: "",
+				password: "",
+			},
+		};
+	},
+	methods: {
+		...mapMutations({ setUser: "data/setUser" }),
+		warnDisabled() {
+			this.disabled = true;
+			setTimeout(() => {
+				this.disabled = false;
+			}, 1500);
+		},
+		async authenticate() {
+			/* save attributes */
+			const email = this.form.email;
+			const password = this.form.password;
+			/* authenticate user */
+			const data = await this.$apollo.query({
+				query: AUTH_USER,
+				variables: { email, password },
+			});
+			/* check condition data */
+			if (data.data.user.length >= 1) {
+				/* save user */
+				this.setUser({ uniqueId: password, name: data.data.user[0] });
+				/* get success notification */
+				await this.$swal({
+					toast: true,
+					position: "top-end",
+					showConfirmButton: false,
+					timer: 3000,
+					timerProgressBar: true,
+					icon: "success",
+					title: "Login berhasil",
+				});
+				/* redirect to home */
+				this.$router.push({ name: "Home" });
+			} else {
+				/* get false notification */
+				await this.$swal({
+					toast: true,
+					position: "top-end",
+					showConfirmButton: false,
+					timer: 3000,
+					timerProgressBar: true,
+					icon: "error",
+					title: "Email atau Password salah",
+				});
+			}
+		},
+	},
 };
 </script>
 
@@ -91,5 +157,33 @@ input::-webkit-input-placeholder {
 	font-size: 15px;
 	opacity: 0.75;
 	line-height: 2;
+}
+
+.shake {
+	animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+	transform: translate3d(0, 0, 0);
+}
+
+@keyframes shake {
+	10%,
+	90% {
+		transform: translate3d(-1px, 0, 0);
+	}
+
+	20%,
+	80% {
+		transform: translate3d(2px, 0, 0);
+	}
+
+	30%,
+	50%,
+	70% {
+		transform: translate3d(-4px, 0, 0);
+	}
+
+	40%,
+	60% {
+		transform: translate3d(4px, 0, 0);
+	}
 }
 </style>

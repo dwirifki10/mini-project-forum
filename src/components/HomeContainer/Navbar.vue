@@ -64,11 +64,26 @@
 					</router-link>
 				</li>
 				<li class="nav-item">
-					<router-link class="" :to="{ name: 'Login' }">
+					<router-link :to="{ name: 'Login' }" v-if="name == ''">
 						<button
-							class="btn bg-base pe-4 ps-4 rounded-pill font-base text-decoration-none text-white"
+							class="btn bg-base pe-3 ps-3 font-base text-decoration-none text-white shadow"
 						>
 							Sign In
+						</button>
+					</router-link>
+					<router-link :to="{ name: 'Dashboard' }" v-if="name">
+						<button
+							class="btn bg-base pe-3 ps-3 font-base text-decoration-none text-white shadow"
+						>
+							Hai, {{ name }}
+						</button>
+					</router-link>
+					<router-link to="/" v-if="name" class="ms-3">
+						<button
+							class="btn btn-danger pe-3 ps-3 font-base text-decoration-none shadow"
+							@click="logout"
+						>
+							Logout
 						</button>
 					</router-link>
 				</li>
@@ -83,11 +98,20 @@ export default {
 	data() {
 		return {
 			show: false,
+			name: "",
 		};
+	},
+	mounted() {
+		const name = this.$store.state.data.name.name;
+		if (name) this.name = name.split(" ")[0];
 	},
 	methods: {
 		toggleNavbar() {
 			this.show = !this.show;
+		},
+		logout() {
+			localStorage.clear();
+			window.location.reload();
 		},
 	},
 };
