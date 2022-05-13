@@ -71,6 +71,7 @@ export const UPDATE_USER = gql`
 		$name: String!
 		$location: String!
 		$status: String!
+		$updated: String!
 	) {
 		update_user(
 			where: { id: { _eq: $id } }
@@ -79,6 +80,7 @@ export const UPDATE_USER = gql`
 				name: $name
 				location: $location
 				status: $status
+				updated: $updated
 			}
 		) {
 			returning {

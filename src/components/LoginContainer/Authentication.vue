@@ -115,7 +115,8 @@ export default {
 				this.$router.push({ name: "Home" });
 			} else {
 				/* get false notification */
-				await this.$swal({
+				this.form.password = "";
+				this.$swal({
 					toast: true,
 					position: "top-end",
 					showConfirmButton: false,

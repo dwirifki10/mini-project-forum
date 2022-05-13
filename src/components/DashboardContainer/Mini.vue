@@ -86,7 +86,7 @@
 								<tbody class="fs-25 align-items-center">
 									<tr v-for="item in items" :key="item.id">
 										<!-- id -->
-										<td scope="col">{{ item.id }}</td>
+										<td scope="col">PU{{ item.id }}</td>
 										<!-- title -->
 										<td>{{ item.title }}</td>
 										<!-- views -->
@@ -104,15 +104,12 @@
 											>
 												&nbsp;Detail&nbsp;
 											</router-link>
-											<router-link
-												:to="{
-													name: 'Detail',
-													params: { id: '1' },
-												}"
+											<button
+												@click="destroy(item.id)"
 												class="btn btn-danger btn-sm mb-2"
 											>
 												Hapus
-											</router-link>
+											</button>
 										</td>
 									</tr>
 								</tbody>
@@ -136,6 +133,8 @@
 
 <script>
 import { DETAIL_USER, UPDATE_USER } from "@/graph/user.js";
+import { ALL_POST, DELETE_POST } from "@/graph/dashboard.js";
+import { getDate } from "@/utils/index.js";
 
 export default {
 	name: "Mini",
@@ -159,10 +158,10 @@ export default {
 		},
 		getStatus() {
 			const status = this.user.status;
-			if (status !== null) {
-				return status;
+			if (status === null || status === "") {
+				return "Hai kamu yang disana, sepertinya kamu belum memberikan deskripsi mu nih. Lengkapi ya, agar profile mu semakin menarik.";
 			}
-			return "Hai kamu yang disana, sepertinya kamu belum memberikan deskripsi mu nih. Lengkapi ya, agar profile mu semakin menarik.";
+			return status;
 		},
 	},
 	async mounted() {
@@ -174,12 +173,17 @@ export default {
 				query: DETAIL_USER,
 				variables: { id },
 			});
+			const posts = await this.$apollo.query({
+				query: ALL_POST,
+				variables: { id },
+			});
 			/* if data is not exist */
 			this.user = result.data.user[0];
 			if (this.user === undefined) {
 				localStorage.clear();
 				this.$router.push({ name: "Login" });
 			}
+			this.items = posts.data.post;
 			this.user.star =
 				this.user.UserHaveManyStars_aggregate.aggregate.avg.value;
 		} else {
@@ -189,6 +193,41 @@ export default {
 		}
 	},
 	methods: {
+		destroy(id) {
+			/* notification delete */
+			this.$swal({
+				title: "Apakah kamu yakin ?",
+				text: "Kamu tidak akan bisa mengembalikan ini !",
+				icon: "warning",
+				showCancelButton: true,
+				confirmButtonColor: "#083d77",
+				cancelButtonColor: "#d33",
+				confirmButtonText: "Ya, Hapus",
+			}).then(async (result) => {
+				if (result.isConfirmed) {
+					/* do deletion */
+					await this.$apollo.mutate({
+						mutation: DELETE_POST,
+						variables: { id },
+					});
+					const post_index = this.items
+						.map((value) => {
+							return value.id;
+						})
+						.indexOf(id);
+					this.items.splice(post_index, 1);
+					console.log(post_index);
+					this.$swal({
+						position: "inherit",
+						title: "Terhapus",
+						text: "Data berhasil dihapus",
+						icon: "success",
+						showConfirmButton: false,
+						timer: 1500,
+					});
+				}
+			});
+		},
 		async update() {
 			/* save attributes */
 			const id = this.$store.state.data.name.id;
@@ -196,10 +235,11 @@ export default {
 			const name = this.user.name;
 			const location = this.user.location;
 			const status = this.user.status;
+			const updated = getDate();
 			/* update profile */
 			await this.$apollo.mutate({
 				mutation: UPDATE_USER,
-				variables: { id, photo, name, location, status },
+				variables: { id, photo, name, location, status, updated },
 			});
 			/* refetch new data */
 			const result = await this.$apollo.query({
@@ -261,6 +301,13 @@ input::-webkit-input-placeholder {
 	font-size: 15px;
 	opacity: 0.6;
 	line-height: 2;
+}
+
+.form-control {
+	font-family: "Roboto";
+	font-size: 14px;
+	opacity: 0.75;
+	color: #031b4e !important;
 }
 
 /deep/ .my-modal button {

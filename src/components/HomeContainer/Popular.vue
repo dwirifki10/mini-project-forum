@@ -17,27 +17,39 @@
 					<div class="card-body color-base">
 						<div class="d-flex">
 							<p class="card-text mb-0 opacity-75 fw-bold">
-								{{ item.category }}
+								{{ item.PostHasOneCategory.category }}
 							</p>
 							<div class="star-left text-warning">
 								<b-icon
 									icon="star-fill"
 									variant="warning"
 								></b-icon>
-								<span class="fw-bold ps-1">{{
-									item.star
-								}}</span>
+								<span class="fw-bold">
+									{{
+										item.PostHaveManyStars_aggregate
+											.aggregate.avg.value
+									}}
+								</span>
+								<span
+									class="fw-bold"
+									v-if="
+										item.PostHaveManyStars_aggregate
+											.aggregate.avg.value == null
+									"
+								>
+									Null
+								</span>
 							</div>
 						</div>
 						<p class="card-text fs-25 opacity-75">
-							{{ item.name }}
+							{{ item.PostHasOneUser.name }}
 						</p>
 						<h6 class="card-title fw-bold">
 							{{ item.title }}
 						</h6>
 						<div class="fs-25 card-bottom d-flex">
 							<p class="opacity-75">
-								{{ item.createdAt }}
+								{{ item.created }}
 							</p>
 							<router-link
 								:to="{ name: 'Detail', params: { id: '1' } }"
@@ -59,37 +71,22 @@
 </template>
 
 <script>
+import { POP_POST } from "@/graph/index.js";
+
 export default {
 	name: "Popular",
 	data() {
 		return {
-			items: [
-				{
-					id: 1,
-					title: "Apa ada cara terbaik belajar JavaScript bagi pemula ?",
-					category: "Technology",
-					name: "Dwi Rifki Novianto",
-					star: 4.5,
-					createdAt: "22 Juni 2022",
-				},
-				{
-					id: 2,
-					title: "Saya ingin membuat menu nasi goreng. Ada yang tahu resep dan cara membuatnya ?",
-					category: "Entertainment",
-					name: "Dwi Rifki Novianto",
-					star: 4.9,
-					createdAt: "22 Juni 2021",
-				},
-				{
-					id: 3,
-					title: "Cara terbaik menghafal rumus, bagaimana ?",
-					category: "Education",
-					name: "Dwi Rifki Novianto",
-					star: 4.7,
-					createdAt: "22 Juni 2023",
-				},
-			],
+			items: [],
 		};
+	},
+	async mounted() {
+		const total = 3;
+		const data = await this.$apollo.query({
+			query: POP_POST,
+			variables: { total },
+		});
+		this.items = data.data.post;
 	},
 };
 </script>
