@@ -39,7 +39,10 @@
 							role="tabpanel"
 						>
 							<b-card-body>
-								<b-card-text v-html="item.text"></b-card-text>
+								<b-card-text
+									v-html="item.text"
+									class="color-base"
+								></b-card-text>
 							</b-card-body>
 						</b-collapse>
 					</b-card>

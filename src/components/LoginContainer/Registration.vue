@@ -13,11 +13,12 @@
 							</p>
 						</div>
 						<div class="justify-content-center mb-2 pe-2">
-							<form>
+							<form @submit.prevent="register" method="POST">
 								<div class="form-group mb-3">
 									<input
 										type="text"
 										class="form-control"
+										v-model="form.name"
 										placeholder="Masukan Nama ex: Anonim"
 									/>
 								</div>
@@ -25,12 +26,14 @@
 									<input
 										type="email"
 										class="form-control"
+										v-model="form.email"
 										placeholder="Masukan Email ex: anonim@gmail.com"
 									/>
 								</div>
 								<div class="form-group mb-3">
 									<input
 										type="password"
+										v-model="form.password"
 										class="form-control"
 										placeholder="Masukan Password"
 									/>
@@ -38,6 +41,7 @@
 								<div class="form-group mb-3">
 									<input
 										type="text"
+										v-model="form.location"
 										class="form-control"
 										placeholder="Masukan Lokasi ex: Jakarta"
 									/>
@@ -70,8 +74,74 @@
 </template>
 
 <script>
+import { ADD_USER, CHECK_EMAIL } from "@/graph/user.js";
+import { getDate } from "@/utils/index.js";
+
 export default {
 	name: "Registration",
+	data() {
+		return {
+			form: {
+				name: "",
+				email: "",
+				password: "",
+				location: "",
+			},
+		};
+	},
+	methods: {
+		async register() {
+			/* save attributes */
+			const name = this.form.name;
+			const email = this.form.email;
+			const password = this.form.password;
+			const location = this.form.location;
+			const created = getDate();
+			const updated = created;
+			/* check email is active */
+			const data = await this.$apollo.query({
+				query: CHECK_EMAIL,
+				variables: { email },
+			});
+			if (data.data.user.length >= 1) {
+				/* get notification */
+				await this.$swal({
+					toast: true,
+					position: "top-end",
+					showConfirmButton: false,
+					timer: 3000,
+					timerProgressBar: true,
+					icon: "error",
+					title: "Email sudah ada",
+				});
+			} else {
+				/* insert to database */
+				await this.$apollo.mutate({
+					mutation: ADD_USER,
+					variables: {
+						name,
+						email,
+						password,
+						location,
+						created,
+						updated,
+					},
+				});
+				/* get notification */
+				await this.$swal({
+					toast: true,
+					position: "top-end",
+					showConfirmButton: false,
+					timer: 3000,
+					timerProgressBar: true,
+					icon: "success",
+					title: "Berhasil mendaftarkan akun",
+				});
+				/* push to login */
+				this.$router.push({ name: "Login" });
+			}
+		},
+	},
 };
 </script>
 

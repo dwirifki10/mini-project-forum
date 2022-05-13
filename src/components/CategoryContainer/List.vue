@@ -1,7 +1,7 @@
 <template>
 	<div class="mt-5 font-base mb-5">
 		<h4 class="ps-2 mb-4 fw-bold color-title text-center">
-			Kategori Entertainment
+			Kategori {{ category }}
 		</h4>
 		<div class="row g-0">
 			<div class="col-lg-8">
@@ -97,10 +97,13 @@
 </template>
 
 <script>
+import { getCategory } from "@/utils/index.js";
+
 export default {
 	name: "List",
 	data() {
 		return {
+			category: "",
 			items: [
 				{
 					title: "Bagaimana cara mudah belajar JavaScript",
@@ -144,6 +147,19 @@ export default {
 				},
 			],
 		};
+	},
+	mounted() {
+		this.getCategoryByParams();
+	},
+	watch: {
+		$route() {
+			this.getCategoryByParams();
+		},
+	},
+	methods: {
+		getCategoryByParams() {
+			this.category = getCategory(this.$route.params.id);
+		},
 	},
 };
 </script>

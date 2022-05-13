@@ -10,14 +10,13 @@
 					Situs berbagi cerita, pengalaman dan pengetahuan. Buat post
 					pertama mu dan lakukan diskusi sekarang juga.
 				</p>
-				<button class="btn bg-base pe-4 ps-4 pt-2 pb-2 rounded-pill">
-					<router-link
-						class="text-white font-base text-decoration-none"
-						:to="{ name: 'Dashboard' }"
+				<router-link :to="{ name: 'Dashboard' }">
+					<button
+						class="btn bg-base pe-4 ps-4 pt-2 pb-2 rounded-pill text-white font-base text-decoration-none"
 					>
 						Buat Post
-					</router-link>
-				</button>
+					</button>
+				</router-link>
 			</div>
 			<div class="col-lg-7">
 				<img
