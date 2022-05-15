@@ -26,7 +26,7 @@
 									<p
 										class="card-text mb-0 opacity-75 fw-bold"
 									>
-										{{ item.category }}
+										{{ item.PostHasOneCategory.category }}
 									</p>
 									<div class="ms-auto text-warning">
 										<b-icon
@@ -34,12 +34,13 @@
 											variant="warning"
 										></b-icon>
 										<span class="fw-bold ps-1">{{
-											item.star
+											item.PostHaveManyStars_aggregate
+												.aggregate.avg.value
 										}}</span>
 									</div>
 								</div>
 								<p class="card-text fs-25 opacity-75">
-									{{ item.name }}
+									{{ item.PostHasOneUser.name }}
 								</p>
 								<h6 class="card-title fw-bold">
 									{{ item.title }}
@@ -98,62 +99,42 @@
 
 <script>
 import { getCategory } from "@/utils/index.js";
+import { CTG_POST } from "@/graph/index.js";
 
 export default {
 	name: "List",
 	data() {
 		return {
 			category: "",
-			items: [
-				{
-					title: "Bagaimana cara mudah belajar JavaScript",
-					id: 1,
-					category: "Technology",
-					name: "Dwi Rifki Novianto",
-					star: 4.5,
-					createdAt: "22 Juni 2022",
-				},
-				{
-					title: "Bagaimana cara memasak nasi goreng yang enak dan lezat ada yang tahu ?",
-					id: 2,
-					category: "Technology",
-					name: "Dwi Rifki Novianto",
-					star: 4.5,
-					createdAt: "22 Juni 2022",
-				},
-				{
-					title: "Bagaimana cara agar mudah menghafal rumus ?",
-					id: 3,
-					category: "Technology",
-					name: "Dwi Rifki Novianto",
-					star: 4.5,
-					createdAt: "22 Juni 2022",
-				},
-				{
-					title: "Mengapa kita memiliki selera seni yang berbeda - beda ?",
-					id: 4,
-					category: "Technology",
-					name: "Dwi Rifki Novianto",
-					star: 4.5,
-					createdAt: "22 Juni 2022",
-				},
-				{
-					title: "Apa olahraga favoritmu dan mengapa ?",
-					id: 5,
-					category: "Technology",
-					name: "Dwi Rifki Novianto",
-					star: 4.5,
-					createdAt: "22 Juni 2022",
-				},
-			],
+			items: [],
 		};
 	},
-	mounted() {
+	async mounted() {
 		this.getCategoryByParams();
+		const id = Number(this.$route.params.id);
+		if ([1, 2, 3, 4, 5].includes(id)) {
+			const data = await this.$apollo.query({
+				query: CTG_POST,
+				variables: { category_id: id },
+			});
+			this.items = data.data.post;
+		} else {
+			this.$router.push({ name: "Home" });
+		}
 	},
 	watch: {
-		$route() {
+		async $route() {
 			this.getCategoryByParams();
+			const id = Number(this.$route.params.id);
+			if ([1, 2, 3, 4, 5].includes(id)) {
+				const data = await this.$apollo.query({
+					query: CTG_POST,
+					variables: { category_id: id },
+				});
+				this.items = data.data.post;
+			} else {
+				this.$router.push({ name: "Home" });
+			}
 		},
 	},
 	methods: {
