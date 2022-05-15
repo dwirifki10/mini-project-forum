@@ -14,7 +14,7 @@ const Secure = new SecureLS({
 
 const stateUniqueId = createPersistedState({
   key: "uniqueId",
-  paths: ["data.items"],
+  paths: ["data.uniqueId"],
   storage: {
     getItem: (key) => Secure.get(key),
     setItem: (key, value) => Secure.set(key, value),
@@ -33,7 +33,7 @@ const stateName = createPersistedState({
 });
 
 const stateItems = createPersistedState({
-  key: "Item",
+  key: "Items",
   paths: ["data.items"],
   storage: {
     getItem: (key) => Secure.get(key),

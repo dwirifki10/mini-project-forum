@@ -67,10 +67,14 @@
 						<div class="input-group mb-3 mt-3">
 							<input
 								type="text"
+								v-model="search"
 								class="form-control"
 								placeholder="Type to search ..."
 							/>
-							<button class="btn bg-base text-white">
+							<button
+								class="btn bg-base text-white"
+								@click="find(search)"
+							>
 								Search
 							</button>
 						</div>
@@ -83,10 +87,10 @@
 								</li>
 								<li
 									class="list-group-item color-base opacity-75"
-									v-for="item in items"
-									:key="item.index"
+									v-for="post in posts.slice(0, 5)"
+									:key="post.index"
 								>
-									{{ item.title }}
+									{{ post.title }}
 								</li>
 							</ul>
 						</div>
@@ -99,14 +103,17 @@
 
 <script>
 import { getCategory } from "@/utils/index.js";
-import { CTG_POST } from "@/graph/index.js";
+import { CTG_POST, GET_POST } from "@/graph/index.js";
+import { mapMutations } from "vuex";
 
 export default {
 	name: "List",
 	data() {
 		return {
 			category: "",
+			search: "",
 			items: [],
+			posts: [],
 		};
 	},
 	async mounted() {
@@ -121,6 +128,12 @@ export default {
 		} else {
 			this.$router.push({ name: "Home" });
 		}
+		const posts = await this.$apollo.query({
+			query: GET_POST,
+			variables: { total: 20 },
+		});
+		this.posts = posts.data.post;
+		this.setItem({ items: posts.data.post });
 	},
 	watch: {
 		async $route() {
@@ -138,8 +151,14 @@ export default {
 		},
 	},
 	methods: {
+		...mapMutations({ setItem: "data/setItem" }),
 		getCategoryByParams() {
 			this.category = getCategory(this.$route.params.id);
+		},
+		find(search) {
+			if (search === "") {
+				this.posts = this.$store.state.data.items;
+			}
 		},
 	},
 };

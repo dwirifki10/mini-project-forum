@@ -42,3 +42,12 @@ export const CTG_POST = gql`
 		}
 	}
 `;
+
+export const GET_POST = gql`
+	query getPosts($total: Int!) {
+		post(limit: $total) {
+			id
+			title
+		}
+	}
+`;
