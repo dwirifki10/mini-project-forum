@@ -38,6 +38,7 @@ export const CTG_POST = gql`
 					}
 				}
 			}
+			id
 			title
 		}
 	}
