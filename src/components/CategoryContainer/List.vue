@@ -17,7 +17,7 @@
 						>
 							<img
 								class="card-img-top"
-								src="@/assets/img/L01.jpg"
+								src="@/assets/img/I04.jpg"
 								alt="Card image cap"
 								height="250"
 							/>
@@ -33,6 +33,15 @@
 											icon="star-fill"
 											variant="warning"
 										></b-icon>
+										<span
+											class="fw-bold ps-1"
+											v-if="
+												item.PostHaveManyStars_aggregate
+													.aggregate.avg.value == null
+											"
+										>
+											Belum Ada
+										</span>
 										<span class="fw-bold ps-1">
 											{{
 												item.PostHaveManyStars_aggregate
