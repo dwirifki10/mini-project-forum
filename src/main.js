@@ -9,6 +9,9 @@ import VueSweetalert2 from "vue-sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
 Vue.use(VueSweetalert2);
 
+import axios from "axios";
+axios.defaults.baseURL = "https://project-app-forum.herokuapp.com/api/v1";
+
 // Apollo Requirements
 import { ApolloClient } from "apollo-client";
 import { createHttpLink } from "apollo-link-http";

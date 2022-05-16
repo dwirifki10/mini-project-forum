@@ -33,10 +33,12 @@
 											icon="star-fill"
 											variant="warning"
 										></b-icon>
-										<span class="fw-bold ps-1">{{
-											item.PostHaveManyStars_aggregate
-												.aggregate.avg.value
-										}}</span>
+										<span class="fw-bold ps-1">
+											{{
+												item.PostHaveManyStars_aggregate
+													.aggregate.avg.value
+											}}
+										</span>
 									</div>
 								</div>
 								<p class="card-text fs-25 opacity-75">
@@ -49,7 +51,7 @@
 									<router-link
 										:to="{
 											name: 'Detail',
-											params: { id: '1' },
+											params: { id: item.id },
 										}"
 										class="fw-bold text-decoration-none color-title card-left"
 									>
@@ -94,7 +96,7 @@
 									<router-link
 										:to="{
 											name: 'Detail',
-											params: { id: 'item.id' },
+											params: { id: post.id },
 										}"
 										class="text-decoration-none color-base"
 									>
