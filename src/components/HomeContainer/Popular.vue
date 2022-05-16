@@ -52,7 +52,10 @@
 								{{ item.created }}
 							</p>
 							<router-link
-								:to="{ name: 'Detail', params: { id: '1' } }"
+								:to="{
+									name: 'Detail',
+									params: { id: 'item.id' },
+								}"
 								class="fw-bold card-left text-decoration-none color-title"
 							>
 								Selengkapnya
@@ -63,9 +66,11 @@
 			</div>
 		</div>
 		<div class="mt-5 text-center">
-			<button class="btn bg-base-outline p-3 rounded-pill">
-				Lebih Banyak
-			</button>
+			<router-link :to="{ name: 'Category', params: { id: 6 } }">
+				<button class="btn bg-base-outline p-3 rounded-pill">
+					Lebih Banyak
+				</button>
+			</router-link>
 		</div>
 	</div>
 </template>

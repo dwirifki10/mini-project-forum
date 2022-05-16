@@ -85,12 +85,21 @@
 										Popular Post
 									</h5>
 								</li>
+
 								<li
 									class="list-group-item color-base opacity-75"
-									v-for="post in posts.slice(0, 5)"
+									v-for="post in posts"
 									:key="post.index"
 								>
-									{{ post.title }}
+									<router-link
+										:to="{
+											name: 'Detail',
+											params: { id: 'item.id' },
+										}"
+										class="text-decoration-none color-base"
+									>
+										{{ post.title }}
+									</router-link>
 								</li>
 							</ul>
 						</div>
@@ -103,7 +112,7 @@
 
 <script>
 import { getCategory } from "@/utils/index.js";
-import { CTG_POST, GET_POST } from "@/graph/index.js";
+import { CTG_POST, GET_POST, POP_POST } from "@/graph/index.js";
 import { mapMutations } from "vuex";
 
 export default {
@@ -119,12 +128,20 @@ export default {
 	async mounted() {
 		this.getCategoryByParams();
 		const id = Number(this.$route.params.id);
-		if ([1, 2, 3, 4, 5].includes(id)) {
-			const data = await this.$apollo.query({
-				query: CTG_POST,
-				variables: { category_id: id },
-			});
-			this.items = data.data.post;
+		if ([1, 2, 3, 4, 5, 6].includes(id)) {
+			if (id == 6) {
+				const all = await this.$apollo.query({
+					query: POP_POST,
+					variables: { total: 20 },
+				});
+				this.items = all.data.post;
+			} else {
+				const data = await this.$apollo.query({
+					query: CTG_POST,
+					variables: { category_id: id },
+				});
+				this.items = data.data.post;
+			}
 		} else {
 			this.$router.push({ name: "Home" });
 		}
@@ -132,7 +149,7 @@ export default {
 			query: GET_POST,
 			variables: { total: 20 },
 		});
-		this.posts = posts.data.post;
+		this.posts = posts.data.post.slice(0, 5);
 		this.setItem({ items: posts.data.post });
 	},
 	watch: {
@@ -156,8 +173,18 @@ export default {
 			this.category = getCategory(this.$route.params.id);
 		},
 		find(search) {
-			if (search === "") {
-				this.posts = this.$store.state.data.items;
+			const data = this.$store.state.data.items.items;
+			if (search) {
+				this.posts = data
+					.filter((item) => {
+						return this.search
+							.toLowerCase()
+							.split(" ")
+							.every((v) => item.title.toLowerCase().includes(v));
+					})
+					.slice(0, 5);
+			} else {
+				this.posts = data.slice(0, 5);
 			}
 		},
 	},
