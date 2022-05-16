@@ -1,7 +1,7 @@
 <template>
 	<div class="mt-5 font-base mb-5">
 		<h4 class="ps-2 mb-4 fw-bold color-title text-center">
-			Kategori Entertainment
+			Kategori {{ category }}
 		</h4>
 		<div class="row g-0">
 			<div class="col-lg-8">
@@ -17,7 +17,7 @@
 						>
 							<img
 								class="card-img-top"
-								src="@/assets/img/L01.jpg"
+								src="@/assets/img/I04.jpg"
 								alt="Card image cap"
 								height="250"
 							/>
@@ -26,20 +26,32 @@
 									<p
 										class="card-text mb-0 opacity-75 fw-bold"
 									>
-										{{ item.category }}
+										{{ item.PostHasOneCategory.category }}
 									</p>
 									<div class="ms-auto text-warning">
 										<b-icon
 											icon="star-fill"
 											variant="warning"
 										></b-icon>
-										<span class="fw-bold ps-1">{{
-											item.star
-										}}</span>
+										<span
+											class="fw-bold ps-1"
+											v-if="
+												item.PostHaveManyStars_aggregate
+													.aggregate.avg.value == null
+											"
+										>
+											Belum Ada
+										</span>
+										<span class="fw-bold ps-1">
+											{{
+												item.PostHaveManyStars_aggregate
+													.aggregate.avg.value
+											}}
+										</span>
 									</div>
 								</div>
 								<p class="card-text fs-25 opacity-75">
-									{{ item.name }}
+									{{ item.PostHasOneUser.name }}
 								</p>
 								<h6 class="card-title fw-bold">
 									{{ item.title }}
@@ -48,7 +60,7 @@
 									<router-link
 										:to="{
 											name: 'Detail',
-											params: { id: '1' },
+											params: { id: item.id },
 										}"
 										class="fw-bold text-decoration-none color-title card-left"
 									>
@@ -66,10 +78,14 @@
 						<div class="input-group mb-3 mt-3">
 							<input
 								type="text"
+								v-model="search"
 								class="form-control"
 								placeholder="Type to search ..."
 							/>
-							<button class="btn bg-base text-white">
+							<button
+								class="btn bg-base text-white"
+								@click="find(search)"
+							>
 								Search
 							</button>
 						</div>
@@ -80,12 +96,21 @@
 										Popular Post
 									</h5>
 								</li>
+
 								<li
 									class="list-group-item color-base opacity-75"
-									v-for="item in items"
-									:key="item.index"
+									v-for="post in posts"
+									:key="post.index"
 								>
-									{{ item.title }}
+									<router-link
+										:to="{
+											name: 'Detail',
+											params: { id: post.id },
+										}"
+										class="text-decoration-none color-base"
+									>
+										{{ post.title }}
+									</router-link>
 								</li>
 							</ul>
 						</div>
@@ -97,53 +122,82 @@
 </template>
 
 <script>
+import { getCategory } from "@/utils/index.js";
+import { CTG_POST, GET_POST, POP_POST } from "@/graph/index.js";
+import { mapMutations } from "vuex";
+
 export default {
 	name: "List",
 	data() {
 		return {
-			items: [
-				{
-					title: "Bagaimana cara mudah belajar JavaScript",
-					id: 1,
-					category: "Technology",
-					name: "Dwi Rifki Novianto",
-					star: 4.5,
-					createdAt: "22 Juni 2022",
-				},
-				{
-					title: "Bagaimana cara memasak nasi goreng yang enak dan lezat ada yang tahu ?",
-					id: 2,
-					category: "Technology",
-					name: "Dwi Rifki Novianto",
-					star: 4.5,
-					createdAt: "22 Juni 2022",
-				},
-				{
-					title: "Bagaimana cara agar mudah menghafal rumus ?",
-					id: 3,
-					category: "Technology",
-					name: "Dwi Rifki Novianto",
-					star: 4.5,
-					createdAt: "22 Juni 2022",
-				},
-				{
-					title: "Mengapa kita memiliki selera seni yang berbeda - beda ?",
-					id: 4,
-					category: "Technology",
-					name: "Dwi Rifki Novianto",
-					star: 4.5,
-					createdAt: "22 Juni 2022",
-				},
-				{
-					title: "Apa olahraga favoritmu dan mengapa ?",
-					id: 5,
-					category: "Technology",
-					name: "Dwi Rifki Novianto",
-					star: 4.5,
-					createdAt: "22 Juni 2022",
-				},
-			],
+			category: "",
+			search: "",
+			items: [],
+			posts: [],
 		};
+	},
+	async mounted() {
+		this.getCategoryByParams();
+		const id = Number(this.$route.params.id);
+		if ([1, 2, 3, 4, 5, 6].includes(id)) {
+			if (id == 6) {
+				const all = await this.$apollo.query({
+					query: POP_POST,
+					variables: { total: 20 },
+				});
+				this.items = all.data.post;
+			} else {
+				const data = await this.$apollo.query({
+					query: CTG_POST,
+					variables: { category_id: id },
+				});
+				this.items = data.data.post;
+			}
+		} else {
+			this.$router.push({ name: "Home" });
+		}
+		const posts = await this.$apollo.query({
+			query: GET_POST,
+			variables: { total: 20 },
+		});
+		this.posts = posts.data.post.slice(0, 5);
+		this.setItem({ items: posts.data.post });
+	},
+	watch: {
+		async $route() {
+			this.getCategoryByParams();
+			const id = Number(this.$route.params.id);
+			if ([1, 2, 3, 4, 5].includes(id)) {
+				const data = await this.$apollo.query({
+					query: CTG_POST,
+					variables: { category_id: id },
+				});
+				this.items = data.data.post;
+			} else {
+				this.$router.push({ name: "Home" });
+			}
+		},
+	},
+	methods: {
+		...mapMutations({ setItem: "data/setItem" }),
+		getCategoryByParams() {
+			this.category = getCategory(this.$route.params.id);
+		},
+		find(search) {
+			const data = this.$store.state.data.items.items;
+			if (search) {
+				this.posts = data
+					.filter((item) => {
+						return this.search
+							.toLowerCase()
+							.split(" ")
+							.every((v) => item.title.toLowerCase().includes(v));
+					})
+					.slice(0, 5);
+			} else {
+				this.posts = data.slice(0, 5);
+			}
+		},
 	},
 };
 </script>

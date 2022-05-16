@@ -5,52 +5,59 @@
 				<div class="card">
 					<img
 						class="card-img-top"
-						src="../../assets/img/P04.jpg"
+						src="../../assets/img/I04.jpg"
 						alt="Card image cap"
 					/>
 					<div class="card-img-overlay">
 						<!-- Profanity score -->
 						<label class="btn btn-success shadow-lg pe-3 ps-3">
-							Free Profanity {{ item[0].score }}%
+							Profanity Score {{ profanity_score }}
 						</label>
 					</div>
 					<div class="card-body color-base mt-2">
 						<!-- Title -->
-						<h5 class="card-title fw-bold">
-							{{ item[0].title }}
+						<h5 class="card-title fw-bold text-capitalize">
+							{{ item.title }}
 						</h5>
 						<!-- Category, star and views -->
 						<div class="d-flex fs-25">
 							<p class="opacity-75 fw-bold m0 pe-3">
-								{{ item[0].category }}
+								{{ data.category }}
 							</p>
 							<b-icon
 								icon="people-fill"
 								variant="bg-base opacity-75 m2"
 							></b-icon>
 							<p class="opacity-75 fw-bold m1 ps-1 pe-3">
-								{{ item[0].views }} viewers
+								{{ item.views }} viewers
 							</p>
 							<b-icon
 								icon="star-fill"
 								variant="warning mt-2"
 							></b-icon>
+							<p
+								v-if="data.star == null"
+								class="text-warning fw-bold m1 ps-1"
+							>
+								Belum Ada
+							</p>
 							<p class="text-warning fw-bold m1 ps-1">
-								{{ item[0].star }}
+								{{ data.star }}
 							</p>
 						</div>
 						<!-- Writer Name -->
 						<p class="fs-25 opacity-75">
-							Ditulis oleh : <b>{{ item[0].name }}</b>
+							Ditulis oleh : <b>{{ data.name }}</b>
 						</p>
 						<!-- Description Post -->
-						<p class="card-text fs-25 text-justify">
-							{{ item[0].slug }}
-						</p>
+						<p
+							class="card-text fs-25 text-justify"
+							v-html="item.slug"
+						></p>
 						<!-- Updated Post -->
 						<p class="card-text">
 							<small class="text-muted">
-								Last Updated {{ item[0].created }}
+								Last Updated {{ item.updated }}
 							</small>
 						</p>
 					</div>
@@ -64,8 +71,12 @@
 								type="text"
 								class="form-control"
 								placeholder="Type to search ..."
+								v-model="search"
 							/>
-							<button class="btn bg-base text-white">
+							<button
+								class="btn bg-base text-white"
+								@click="find"
+							>
 								Search
 							</button>
 						</div>
@@ -78,10 +89,18 @@
 								</li>
 								<li
 									class="list-group-item color-base opacity-75"
-									v-for="item in items"
-									:key="item.index"
+									v-for="post in posts"
+									:key="post.index"
 								>
-									{{ item.list }}
+									<router-link
+										:to="{
+											name: 'Detail',
+											params: { id: post.id },
+										}"
+										class="text-decoration-none color-base"
+									>
+										{{ post.title }}
+									</router-link>
 								</li>
 							</ul>
 						</div>
@@ -98,42 +117,96 @@
 
 <script>
 import Comment from "./Comment.vue";
+import { mapMutations } from "vuex";
+import { DTL_POST, GET_POST, SET_VIEWS } from "@/graph/index.js";
+import axios from "axios";
+
 export default {
 	name: "Discussion",
 	components: { Comment },
 	data() {
 		return {
-			item: [
-				{
-					id: 1,
-					score: 85,
-					title: "India Sita Aset Xiaomi Senilai $725 Juta, Berikut Ini Sebabnya",
-					category: "Technology",
-					star: 4.2,
-					views: 120,
-					name: "Dwi Rifki Novianto",
-					slug: "Dikabarkan sebelumnya, Badan anti-pencucian uang India mengatakan pada router  hari Sabtu, 30 April 2022, bahwa pihaknya telah menyita aset senilai  $725 juta atau  setara Rp 10.5 Triliun  dari Xiaomi India karena  dianggap melanggar undang-undang valuta asing negara itu, Tentu ini merupakan pukulan besar bagi pembuat ponsel pintar asal  China yang dikabarkan  sangat menguasai pasar ponsel di India.",
-					created: "06 April 2022",
-				},
-			],
-			items: [
-				{
-					list: "Bagaimana cara mudah belajar JavaScript",
-				},
-				{
-					list: "Bagaimana cara memasak nasi goreng yang enak ?",
-				},
-				{
-					list: "Bagaimana cara agar mudah menghafal rumus ?",
-				},
-				{
-					list: "Mengapa kita memiliki selera seni yang berbeda - beda ?",
-				},
-				{
-					list: "Apa olahraga favoritmu dan kenapa ?",
-				},
-			],
+			search: "",
+			profanity_score: null,
+			item: [],
+			posts: [],
+			data: {
+				name: null,
+				category: null,
+				star: null,
+			},
 		};
+	},
+	async mounted() {
+		const id = this.$route.params.id;
+		const data = await this.$apollo.query({
+			query: DTL_POST,
+			variables: { id },
+		});
+
+		this.item = data.data.post[0];
+		this.data.name = await this.item.PostHasOneUser.name;
+		this.data.category = await this.item.PostHasOneCategory.category;
+		this.data.star = await this.item.PostHaveManyStars_aggregate.aggregate
+			.avg.value;
+
+		const data_profanity = await axios.post("/filter?merge=true", {
+			sentence: this.item.slug,
+		});
+
+		this.profanity_score =
+			data_profanity.data.data.result.free_profanity_score;
+
+		if (this.profanity_score < 85) {
+			await this.$swal({
+				toast: true,
+				position: "inherit",
+				showConfirmButton: false,
+				timer: 2000,
+				timerProgressBar: true,
+				icon: "warning",
+				title: "Post ini melanggar ketentuan, kembali ke halaman awal",
+			});
+			this.$router.push({ name: "Home" });
+		}
+
+		console.log(this.$store.state);
+		if (this.$store.state.data.itemId != id) {
+			this.setItemId(id);
+			const views = this.item.views + 1;
+			await this.$apollo.mutate({
+				mutation: SET_VIEWS,
+				variables: { id: id, total: views },
+			});
+		}
+
+		const posts = await this.$apollo.query({
+			query: GET_POST,
+			variables: { total: 20 },
+		});
+		this.posts = posts.data.post.slice(0, 5);
+		this.setItem({ items: posts.data.post });
+	},
+	methods: {
+		...mapMutations({
+			setItem: "data/setItem",
+			setItemId: "data/setItemId",
+		}),
+		find(search) {
+			const data = this.$store.state.data.items.items;
+			if (search) {
+				this.posts = data
+					.filter((item) => {
+						return this.search
+							.toLowerCase()
+							.split(" ")
+							.every((v) => item.title.toLowerCase().includes(v));
+					})
+					.slice(0, 5);
+			} else {
+				this.posts = data.slice(0, 5);
+			}
+		},
 	},
 };
 </script>
@@ -146,5 +219,8 @@ export default {
 }
 .m0 {
 	margin-top: 5px !important;
+}
+.text-justify {
+	text-align: justify !important;
 }
 </style>

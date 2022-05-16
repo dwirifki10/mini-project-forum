@@ -10,37 +10,52 @@
 				<div class="card mb-3" style="width: 20rem; height: 30rem">
 					<img
 						class="card-img-top"
-						src="@/assets/img/L01.jpg"
+						src="@/assets/img/I04.jpg"
 						alt="Card image cap"
 						height="250"
 					/>
 					<div class="card-body color-base">
 						<div class="d-flex">
 							<p class="card-text mb-0 opacity-75 fw-bold">
-								{{ item.category }}
+								{{ item.PostHasOneCategory.category }}
 							</p>
-							<div class="star-left text-warning">
+							<div class="ms-auto text-warning">
 								<b-icon
 									icon="star-fill"
 									variant="warning"
 								></b-icon>
-								<span class="fw-bold ps-1">{{
-									item.star
-								}}</span>
+								<span class="fw-bold">
+									{{
+										item.PostHaveManyStars_aggregate
+											.aggregate.avg.value
+									}}
+								</span>
+								<span
+									class="fw-bold"
+									v-if="
+										item.PostHaveManyStars_aggregate
+											.aggregate.avg.value == null
+									"
+								>
+									Belum Ada
+								</span>
 							</div>
 						</div>
 						<p class="card-text fs-25 opacity-75">
-							{{ item.name }}
+							{{ item.PostHasOneUser.name }}
 						</p>
 						<h6 class="card-title fw-bold">
 							{{ item.title }}
 						</h6>
 						<div class="fs-25 card-bottom d-flex">
 							<p class="opacity-75">
-								{{ item.createdAt }}
+								{{ item.created }}
 							</p>
 							<router-link
-								:to="{ name: 'Detail', params: { id: '1' } }"
+								:to="{
+									name: 'Detail',
+									params: { id: item.id },
+								}"
 								class="fw-bold card-left text-decoration-none color-title"
 							>
 								Selengkapnya
@@ -51,45 +66,32 @@
 			</div>
 		</div>
 		<div class="mt-5 text-center">
-			<button class="btn bg-base-outline p-3 rounded-pill">
-				Lebih Banyak
-			</button>
+			<router-link :to="{ name: 'Category', params: { id: 6 } }">
+				<button class="btn bg-base-outline p-3 rounded-pill">
+					Lebih Banyak
+				</button>
+			</router-link>
 		</div>
 	</div>
 </template>
 
 <script>
+import { POP_POST } from "@/graph/index.js";
+
 export default {
 	name: "Popular",
 	data() {
 		return {
-			items: [
-				{
-					id: 1,
-					title: "Apa ada cara terbaik belajar JavaScript bagi pemula ?",
-					category: "Technology",
-					name: "Dwi Rifki Novianto",
-					star: 4.5,
-					createdAt: "22 Juni 2022",
-				},
-				{
-					id: 2,
-					title: "Saya ingin membuat menu nasi goreng. Ada yang tahu resep dan cara membuatnya ?",
-					category: "Entertainment",
-					name: "Dwi Rifki Novianto",
-					star: 4.9,
-					createdAt: "22 Juni 2021",
-				},
-				{
-					id: 3,
-					title: "Cara terbaik menghafal rumus, bagaimana ?",
-					category: "Education",
-					name: "Dwi Rifki Novianto",
-					star: 4.7,
-					createdAt: "22 Juni 2023",
-				},
-			],
+			items: [],
 		};
+	},
+	async mounted() {
+		const total = 3;
+		const data = await this.$apollo.query({
+			query: POP_POST,
+			variables: { total },
+		});
+		this.items = data.data.post;
 	},
 };
 </script>
@@ -102,10 +104,6 @@ export default {
 .card-left {
 	position: absolute;
 	left: 12rem;
-}
-.star-left {
-	position: absolute;
-	left: 16rem;
 }
 .bg-base-outline {
 	border-color: #083d77 !important;
