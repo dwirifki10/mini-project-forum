@@ -109,7 +109,7 @@ export default {
 				},
 			});
 			/* get notification */
-			this.$swal({
+			await this.$swal({
 				toast: true,
 				position: "top-end",
 				showConfirmButton: false,
@@ -118,6 +118,7 @@ export default {
 				icon: "success",
 				title: "Data berhasil ditambahkan",
 			});
+			window.location.reload();
 		},
 	},
 };
