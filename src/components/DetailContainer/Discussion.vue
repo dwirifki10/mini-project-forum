@@ -5,7 +5,7 @@
 				<div class="card">
 					<img
 						class="card-img-top"
-						src="../../assets/img/P04.jpg"
+						src="../../assets/img/I04.jpg"
 						alt="Card image cap"
 					/>
 					<div class="card-img-overlay">
@@ -16,7 +16,7 @@
 					</div>
 					<div class="card-body color-base mt-2">
 						<!-- Title -->
-						<h5 class="card-title fw-bold">
+						<h5 class="card-title fw-bold text-capitalize">
 							{{ item.title }}
 						</h5>
 						<!-- Category, star and views -->
@@ -38,7 +38,9 @@
 							<p
 								v-if="data.star == null"
 								class="text-warning fw-bold m1 ps-1"
-							></p>
+							>
+								Belum Ada
+							</p>
 							<p class="text-warning fw-bold m1 ps-1">
 								{{ data.star }}
 							</p>
@@ -116,7 +118,7 @@
 <script>
 import Comment from "./Comment.vue";
 import { mapMutations } from "vuex";
-import { DTL_POST, GET_POST } from "@/graph/index.js";
+import { DTL_POST, GET_POST, SET_VIEWS } from "@/graph/index.js";
 import axios from "axios";
 
 export default {
@@ -141,6 +143,7 @@ export default {
 			query: DTL_POST,
 			variables: { id },
 		});
+
 		this.item = data.data.post[0];
 		this.data.name = await this.item.PostHasOneUser.name;
 		this.data.category = await this.item.PostHasOneCategory.category;
@@ -154,6 +157,29 @@ export default {
 		this.profanity_score =
 			data_profanity.data.data.result.free_profanity_score;
 
+		if (this.profanity_score < 85) {
+			await this.$swal({
+				toast: true,
+				position: "inherit",
+				showConfirmButton: false,
+				timer: 2000,
+				timerProgressBar: true,
+				icon: "warning",
+				title: "Post ini melanggar ketentuan, kembali ke halaman awal",
+			});
+			this.$router.push({ name: "Home" });
+		}
+
+		console.log(this.$store.state);
+		if (this.$store.state.data.itemId != id) {
+			this.setItemId(id);
+			const views = this.item.views + 1;
+			await this.$apollo.mutate({
+				mutation: SET_VIEWS,
+				variables: { id: id, total: views },
+			});
+		}
+
 		const posts = await this.$apollo.query({
 			query: GET_POST,
 			variables: { total: 20 },
@@ -162,7 +188,10 @@ export default {
 		this.setItem({ items: posts.data.post });
 	},
 	methods: {
-		...mapMutations({ setItem: "data/setItem" }),
+		...mapMutations({
+			setItem: "data/setItem",
+			setItemId: "data/setItemId",
+		}),
 		find(search) {
 			const data = this.$store.state.data.items.items;
 			if (search) {

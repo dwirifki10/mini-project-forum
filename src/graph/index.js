@@ -54,6 +54,15 @@ export const GET_POST = gql`
 	}
 `;
 
+export const SET_VIEWS = gql`
+	mutation setViews($id: Int!, $total: Int!) {
+		update_post_by_pk(pk_columns: { id: $id }, _set: { views: $total }) {
+			id
+			title
+		}
+	}
+`;
+
 export const DTL_POST = gql`
 	query getDetailPost($id: Int!) {
 		post(where: { id: { _eq: $id } }) {

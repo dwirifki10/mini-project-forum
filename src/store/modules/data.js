@@ -1,4 +1,5 @@
 const state = () => ({
+	itemId: "",
 	items: [],
 	uniqueId: "",
 	name: "",
@@ -11,6 +12,9 @@ const mutations = {
 	setUser(state, payload) {
 		state.uniqueId = payload.uniqueId;
 		state.name = payload.name;
+	},
+	setItemId(state, payload) {
+		state.itemId = payload;
 	},
 };
 

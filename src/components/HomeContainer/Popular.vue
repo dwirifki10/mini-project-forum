@@ -10,7 +10,7 @@
 				<div class="card mb-3" style="width: 20rem; height: 30rem">
 					<img
 						class="card-img-top"
-						src="@/assets/img/L01.jpg"
+						src="@/assets/img/I04.jpg"
 						alt="Card image cap"
 						height="250"
 					/>
@@ -19,7 +19,7 @@
 							<p class="card-text mb-0 opacity-75 fw-bold">
 								{{ item.PostHasOneCategory.category }}
 							</p>
-							<div class="star-left text-warning">
+							<div class="ms-auto text-warning">
 								<b-icon
 									icon="star-fill"
 									variant="warning"
@@ -37,7 +37,7 @@
 											.aggregate.avg.value == null
 									"
 								>
-									Null
+									Belum Ada
 								</span>
 							</div>
 						</div>
@@ -104,10 +104,6 @@ export default {
 .card-left {
 	position: absolute;
 	left: 12rem;
-}
-.star-left {
-	position: absolute;
-	left: 16rem;
 }
 .bg-base-outline {
 	border-color: #083d77 !important;
