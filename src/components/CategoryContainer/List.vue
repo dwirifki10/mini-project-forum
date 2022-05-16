@@ -51,7 +51,7 @@
 									<router-link
 										:to="{
 											name: 'Detail',
-											params: { id: '1' },
+											params: { id: item.id },
 										}"
 										class="fw-bold text-decoration-none color-title card-left"
 									>

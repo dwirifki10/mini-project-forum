@@ -16,6 +16,7 @@ export const POP_POST = gql`
 					}
 				}
 			}
+			id
 			title
 			created
 		}
@@ -49,6 +50,31 @@ export const GET_POST = gql`
 		post(limit: $total) {
 			id
 			title
+		}
+	}
+`;
+
+export const DTL_POST = gql`
+	query getDetailPost($id: Int!) {
+		post(where: { id: { _eq: $id } }) {
+			id
+			title
+			slug
+			views
+			updated
+			PostHaveManyStars_aggregate {
+				aggregate {
+					avg {
+						value
+					}
+				}
+			}
+			PostHasOneCategory {
+				category
+			}
+			PostHasOneUser {
+				name
+			}
 		}
 	}
 `;
