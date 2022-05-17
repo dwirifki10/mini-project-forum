@@ -87,3 +87,26 @@ export const DTL_POST = gql`
 		}
 	}
 `;
+
+export const GET_COMMENT = gql`
+	query getComment($id: Int!) {
+		post(where: { id: { _eq: $id } }) {
+			PostHaveManyComments(where: { parent_id: { _is_null: true } }) {
+				id
+				post_id
+				parent_id
+				user_id
+				comment
+				CommentHaveManyChilds {
+					comment
+					CommentHasOneUser {
+						name
+					}
+				}
+				CommentHasOneUser {
+					name
+				}
+			}
+		}
+	}
+`;

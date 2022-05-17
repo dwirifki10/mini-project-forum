@@ -137,48 +137,13 @@ export default {
 			},
 		};
 	},
+	watch: {
+		$route() {
+			this.getItemPost();
+		},
+	},
 	async mounted() {
-		const id = this.$route.params.id;
-		const data = await this.$apollo.query({
-			query: DTL_POST,
-			variables: { id },
-		});
-
-		this.item = data.data.post[0];
-		this.data.name = await this.item.PostHasOneUser.name;
-		this.data.category = await this.item.PostHasOneCategory.category;
-		this.data.star = await this.item.PostHaveManyStars_aggregate.aggregate
-			.avg.value;
-
-		const data_profanity = await axios.post("/filter?merge=true", {
-			sentence: this.item.slug,
-		});
-
-		this.profanity_score =
-			data_profanity.data.data.result.free_profanity_score;
-
-		if (this.profanity_score < 85) {
-			await this.$swal({
-				toast: true,
-				position: "inherit",
-				showConfirmButton: false,
-				timer: 2000,
-				timerProgressBar: true,
-				icon: "warning",
-				title: "Post ini melanggar ketentuan, kembali ke halaman awal",
-			});
-			this.$router.push({ name: "Home" });
-		}
-
-		console.log(this.$store.state);
-		if (this.$store.state.data.itemId != id) {
-			this.setItemId(id);
-			const views = this.item.views + 1;
-			await this.$apollo.mutate({
-				mutation: SET_VIEWS,
-				variables: { id: id, total: views },
-			});
-		}
+		this.getItemPost();
 
 		const posts = await this.$apollo.query({
 			query: GET_POST,
@@ -192,6 +157,48 @@ export default {
 			setItem: "data/setItem",
 			setItemId: "data/setItemId",
 		}),
+		async getItemPost() {
+			const id = this.$route.params.id;
+			const data = await this.$apollo.query({
+				query: DTL_POST,
+				variables: { id },
+			});
+
+			this.item = data.data.post[0];
+			this.data.name = await this.item.PostHasOneUser.name;
+			this.data.category = await this.item.PostHasOneCategory.category;
+			this.data.star = await this.item.PostHaveManyStars_aggregate
+				.aggregate.avg.value;
+
+			const data_profanity = await axios.post("/filter?merge=true", {
+				sentence: this.item.slug,
+			});
+
+			this.profanity_score =
+				data_profanity.data.data.result.free_profanity_score;
+
+			if (this.profanity_score < 85) {
+				await this.$swal({
+					toast: true,
+					position: "inherit",
+					showConfirmButton: false,
+					timer: 2000,
+					timerProgressBar: true,
+					icon: "warning",
+					title: "Post ini melanggar ketentuan, kembali ke halaman awal",
+				});
+				this.$router.push({ name: "Home" });
+			}
+
+			if (this.$store.state.data.itemId != id) {
+				this.setItemId(id);
+				const views = this.item.views + 1;
+				await this.$apollo.mutate({
+					mutation: SET_VIEWS,
+					variables: { id: id, total: views },
+				});
+			}
+		},
 		find(search) {
 			const data = this.$store.state.data.items.items;
 			if (search) {

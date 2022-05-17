@@ -1,44 +1,43 @@
 <template>
 	<div class="font-base color-base col-lg-8 mt-2 pe-3 ps-3 mb-3">
-		<div class="card shadow">
-			<div class="card-body">
-				<img
-					src="../../assets/img/L01.jpg"
-					class="rounded-circle"
-					width="35"
-					height="35"
-				/>
-				<router-link class="card-title ps-1" :to="{ name: 'Home' }">
-					Dwi Rifki Novianto
-				</router-link>
-				<p class="fs-25 mt-3 mb-4">
-					Ambitioni dedisse scripsisse iudicaretur. Cras mattis
-					iudicium purus sit amet fermentum. Donec sed odio operae, eu
-					vulputate felis rhoncus. Praeterea iter est quasdam res quas
-					ex communi. At nos hinc posthac, sitientis piros Afros.
-					Petierunt uti sibi concilium totius Galliae in diem certam
-					indicere. Cras mattis iudicium purus sit amet fermentum.
-				</p>
-				<span class="fs-25 fw-bold color-title">Reply</span>
+		<div v-for="item in post" :key="item.id" class="mb-4">
+			<div class="card shadow">
+				<div class="card-body">
+					<img
+						src="../../assets/img/L01.jpg"
+						class="rounded-circle"
+						width="35"
+						height="35"
+					/>
+					<router-link class="card-title ps-1" :to="{ name: 'Home' }">
+						{{ item.CommentHasOneUser.name }}
+					</router-link>
+					<p class="fs-25 mt-3 mb-4 text-justify">
+						{{ item.comment }}
+					</p>
+					<span class="fs-25 fw-bold color-title">Reply</span>
+				</div>
 			</div>
-		</div>
-		<div class="ml-auto card shadow mt-3 w-75 ms-auto">
-			<div class="card-body">
-				<img
-					src="../../assets/img/L01.jpg"
-					class="rounded-circle"
-					width="35"
-					height="35"
-				/>
-				<router-link class="card-title ps-1" :to="{ name: 'Home' }">
-					Dwi Rifki Novianto
-				</router-link>
-				<p class="fs-25 mt-2 mb-4">
-					Ambitioni dedisse scripsisse iudicaretur. Cras mattis
-					iudicium purus sit amet fermentum. Donec sed odio operae, eu
-					vulputate felis rhoncus.
-				</p>
-				<span class="fs-25 fw-bold color-title">Reply</span>
+			<div
+				class="ml-auto card shadow mt-3 w-75 ms-auto"
+				v-for="element in item.CommentHaveManyChilds"
+				:key="element.id"
+			>
+				<div class="card-body">
+					<img
+						src="../../assets/img/L01.jpg"
+						class="rounded-circle"
+						width="35"
+						height="35"
+					/>
+					<router-link class="card-title ps-1" :to="{ name: 'Home' }">
+						{{ element.CommentHasOneUser.name }}
+					</router-link>
+					<p class="fs-25 mt-2 mb-4 text-justify">
+						{{ element.comment }}
+					</p>
+					<span class="fs-25 fw-bold color-title">Reply</span>
+				</div>
 			</div>
 		</div>
 		<div class="mt-5">
@@ -68,8 +67,33 @@
 </template>
 
 <script>
+import { GET_COMMENT } from "@/graph/index.js";
+
 export default {
 	name: "Comment",
+	data() {
+		return {
+			post: [],
+		};
+	},
+	watch: {
+		$route() {
+			this.getItemPost();
+		},
+	},
+	async mounted() {
+		this.getItemPost();
+	},
+	methods: {
+		async getItemPost() {
+			const post_id = Number(this.$route.params.id);
+			const data = await this.$apollo.query({
+				query: GET_COMMENT,
+				variables: { id: post_id },
+			});
+			this.post = data.data.post[0].PostHaveManyComments;
+		},
+	},
 };
 </script>
 
@@ -80,5 +104,8 @@ export default {
 	font-size: 15px;
 	font-weight: bold;
 	opacity: 0.75;
+}
+.text-justify {
+	text-align: justify;
 }
 </style>
