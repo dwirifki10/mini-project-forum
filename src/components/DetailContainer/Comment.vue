@@ -84,6 +84,7 @@
 <script>
 import { GET_COMMENT, SET_COMMENT } from "@/graph/index.js";
 import { getDate } from "@/utils/index.js";
+import axios from "axios";
 
 export default {
 	name: "Comment",
@@ -123,32 +124,71 @@ export default {
 			this.form.name_id = null;
 		},
 		async insertComment() {
-			/* insert data */
+			/* save attributes */
 			const post_id = this.$route.params.id;
 			const user_id = this.$store.state.data.name.id;
 			const created = getDate();
 			const updated = created;
-			await this.$apollo.mutate({
-				mutation: SET_COMMENT,
-				variables: {
-					user_id: user_id,
-					post_id: post_id,
-					parent_id: this.form.parent_id,
-					comment: this.form.comment,
-					created: created,
-					updated: updated,
-				},
+			await this.$swal({
+				toast: true,
+				position: "inherit",
+				showConfirmButton: false,
+				timer: 1500,
+				timerProgressBar: true,
+				icon: "warning",
+				title: "Harap tunggu, komentar anda sedang difilter",
 			});
-			/* refetch data */
-			let data = await this.$apollo.query({
-				query: GET_COMMENT,
-				variables: { id: post_id },
+			/* get notification */
+			const result = await axios.post("/filter?merge=true", {
+				sentence: this.form.comment,
 			});
-			this.post = data.data.post[0].PostHaveManyComments;
-			/* reset form */
-			this.form.parent_id = null;
-			this.form.name = "";
-			this.form.comment = "";
+			this.form.comment =
+				this.form.name + " " + result.data.data.result.new_sentence;
+			/* insert data */
+			if (user_id !== undefined) {
+				await this.$apollo.mutate({
+					mutation: SET_COMMENT,
+					variables: {
+						user_id: user_id,
+						post_id: post_id,
+						parent_id: this.form.parent_id,
+						comment: this.form.comment,
+						created: created,
+						updated: updated,
+					},
+					refetchQueries: [
+						{
+							query: GET_COMMENT,
+							variables: { id: post_id },
+							result({ data }) {
+								this.post =
+									data.data.post[0].PostHaveManyComments;
+							},
+						},
+					],
+				});
+				/* refetch data */
+				let data = await this.$apollo.query({
+					query: GET_COMMENT,
+					variables: { id: post_id },
+				});
+				this.post = await data.data.post[0].PostHaveManyComments;
+				/* reset form */
+				this.form.parent_id = null;
+				this.form.name = "";
+				this.form.comment = "";
+			} else {
+				/* get notification */
+				await this.$swal({
+					toast: true,
+					position: "inherit",
+					showConfirmButton: false,
+					timer: 2000,
+					timerProgressBar: true,
+					icon: "warning",
+					title: "Anda harus login terlebih dahulu",
+				});
+			}
 		},
 	},
 };
