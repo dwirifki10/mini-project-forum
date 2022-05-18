@@ -143,7 +143,9 @@ export default {
 				sentence: this.form.comment,
 			});
 			this.form.comment =
-				this.form.name + " " + result.data.data.result.new_sentence;
+				this.form.name.replace("Reply : ", "") +
+				" " +
+				result.data.data.result.new_sentence;
 			/* insert data */
 			if (user_id !== undefined) {
 				await this.$apollo.mutate({
@@ -156,27 +158,8 @@ export default {
 						created: created,
 						updated: updated,
 					},
-					refetchQueries: [
-						{
-							query: GET_COMMENT,
-							variables: { id: post_id },
-							result({ data }) {
-								this.post =
-									data.data.post[0].PostHaveManyComments;
-							},
-						},
-					],
 				});
-				/* refetch data */
-				let data = await this.$apollo.query({
-					query: GET_COMMENT,
-					variables: { id: post_id },
-				});
-				this.post = await data.data.post[0].PostHaveManyComments;
-				/* reset form */
-				this.form.parent_id = null;
-				this.form.name = "";
-				this.form.comment = "";
+				window.location.reload();
 			} else {
 				/* get notification */
 				await this.$swal({
