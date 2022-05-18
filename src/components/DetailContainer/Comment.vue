@@ -15,7 +15,12 @@
 					<p class="fs-25 mt-3 mb-4 text-justify">
 						{{ item.comment }}
 					</p>
-					<span class="fs-25 fw-bold color-title">Reply</span>
+					<span
+						class="fs-25 fw-bold color-title pointer"
+						@click="reply(item.CommentHasOneUser.name, item.id)"
+					>
+						Reply
+					</span>
 				</div>
 			</div>
 			<div
@@ -36,26 +41,36 @@
 					<p class="fs-25 mt-2 mb-4 text-justify">
 						{{ element.comment }}
 					</p>
-					<span class="fs-25 fw-bold color-title">Reply</span>
+					<span
+						class="fs-25 fw-bold color-title pointer"
+						@click="reply(element.CommentHasOneUser.name, item.id)"
+					>
+						Reply
+					</span>
 				</div>
 			</div>
 		</div>
 		<div class="mt-5">
 			<h5 class="color-title fw-bold">Buat Komentar</h5>
-			<form class="col-lg-8">
-				<div class="form-group mb-3">
+			<form class="col-lg-8" @submit.prevent="insertComment">
+				<div class="input-group mb-3">
 					<input
-						type="email"
+						type="name"
 						class="form-control"
-						placeholder="Reply : Dwi Rifki Novianto"
+						:value="form.name"
 						disabled
 					/>
+					<button class="btn bg-base text-white" @click="destroy">
+						Hapus
+					</button>
 				</div>
 				<div class="form-group">
 					<textarea
+						v-model="form.comment"
 						class="form-control"
 						rows="5"
 						placeholder="Tuliskan Komentar"
+						required
 					></textarea>
 				</div>
 				<button class="btn bg-base text-white pe-4 ps-4 mt-3">
@@ -67,13 +82,19 @@
 </template>
 
 <script>
-import { GET_COMMENT } from "@/graph/index.js";
+import { GET_COMMENT, SET_COMMENT } from "@/graph/index.js";
+import { getDate } from "@/utils/index.js";
 
 export default {
 	name: "Comment",
 	data() {
 		return {
 			post: [],
+			form: {
+				parent_id: null,
+				name: "",
+				comment: "",
+			},
 		};
 	},
 	watch: {
@@ -93,6 +114,42 @@ export default {
 			});
 			this.post = data.data.post[0].PostHaveManyComments;
 		},
+		reply(name, parent_id) {
+			this.form.name = "Reply : " + name;
+			this.form.parent_id = parent_id;
+		},
+		destroy() {
+			this.form.name = "";
+			this.form.name_id = null;
+		},
+		async insertComment() {
+			/* insert data */
+			const post_id = this.$route.params.id;
+			const user_id = this.$store.state.data.name.id;
+			const created = getDate();
+			const updated = created;
+			await this.$apollo.mutate({
+				mutation: SET_COMMENT,
+				variables: {
+					user_id: user_id,
+					post_id: post_id,
+					parent_id: this.form.parent_id,
+					comment: this.form.comment,
+					created: created,
+					updated: updated,
+				},
+			});
+			/* refetch data */
+			let data = await this.$apollo.query({
+				query: GET_COMMENT,
+				variables: { id: post_id },
+			});
+			this.post = data.data.post[0].PostHaveManyComments;
+			/* reset form */
+			this.form.parent_id = null;
+			this.form.name = "";
+			this.form.comment = "";
+		},
 	},
 };
 </script>
@@ -107,5 +164,8 @@ export default {
 }
 .text-justify {
 	text-align: justify;
+}
+.pointer {
+	cursor: pointer;
 }
 </style>
