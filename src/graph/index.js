@@ -98,6 +98,9 @@ export const GET_COMMENT = gql`
 				user_id
 				comment
 				CommentHaveManyChilds {
+					id
+					parent_id
+					user_id
 					comment
 					CommentHasOneUser {
 						name
@@ -106,6 +109,34 @@ export const GET_COMMENT = gql`
 				CommentHasOneUser {
 					name
 				}
+			}
+		}
+	}
+`;
+
+export const SET_COMMENT = gql`
+	mutation setComment(
+		$user_id: Int!
+		$post_id: Int!
+		$parent_id: Int!
+		$comment: String!
+		$created: String!
+		$updated: String!
+	) {
+		insert_comment(
+			objects: [
+				{
+					user_id: $user_id
+					post_id: $post_id
+					parent_id: $parent_id
+					comment: $comment
+					created: $created
+					updated: $updated
+				}
+			]
+		) {
+			returning {
+				id
 			}
 		}
 	}
