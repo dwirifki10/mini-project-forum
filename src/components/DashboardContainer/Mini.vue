@@ -98,7 +98,7 @@
 											<router-link
 												:to="{
 													name: 'Detail',
-													params: { id: '1' },
+													params: { id: item.id },
 												}"
 												class="btn bg-base text-white btn-sm mb-2 me-3 ms-3"
 											>
